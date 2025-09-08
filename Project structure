@@ -1,0 +1,11 @@
+namie-the-fighter/
+ ┣ public/
+ ┃ ┣ index.html
+ ┃ ┣ manifest.json
+ ┃ ┣ service-worker.js
+ ┃ ┣ icon-192.png   (boleh upload gambar apa², contoh logo fighter)
+ ┃ ┗ icon-512.png   (sama, version besar)
+ ┣ src/
+ ┃ ┣ index.js
+ ┃ ┗ App.js
+ ┗ package.json
