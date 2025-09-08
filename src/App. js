@@ -1,0 +1,56 @@
+import React, { useState } from "react";
+import { arcs } from "./quests";
+
+function App() {
+  const [arc, setArc] = useState(1);
+  const [completed, setCompleted] = useState([]);
+
+  const quests = arcs[arc];
+
+  const toggleQuest = (quest) => {
+    if (completed.includes(quest)) {
+      setCompleted(completed.filter((q) => q !== quest));
+    } else {
+      setCompleted([...completed, quest]);
+    }
+  };
+
+  const levelUp = () => {
+    if (completed.length === quests.length && arc < 3) {
+      setArc(arc + 1);
+      setCompleted([]);
+    }
+  };
+
+  return (
+    <div style={{ padding: "20px", fontFamily: "sans-serif" }}>
+      <h1>🔥 Namie The Fighter</h1>
+      <h2>Arc {arc}</h2>
+
+      <ul>
+        {quests.map((quest) => (
+          <li
+            key={quest}
+            onClick={() => toggleQuest(quest)}
+            style={{
+              cursor: "pointer",
+              textDecoration: completed.includes(quest) ? "line-through" : "none"
+            }}
+          >
+            {quest}
+          </li>
+        ))}
+      </ul>
+
+      {completed.length === quests.length && arc < 3 && (
+        <button onClick={levelUp}>Level Up 🚀</button>
+      )}
+
+      {arc === 3 && completed.length === quests.length && (
+        <p>🎉 Tahniah! Namie dah habis semua Arc!</p>
+      )}
+    </div>
+  );
+}
+
+export default App;
