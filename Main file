@@ -1,0 +1,49 @@
+import { useEffect, useMemo, useState } from "react"; import { Card, CardContent } from "@/components/ui/card"; import { Button } from "@/components/ui/button"; import { Progress } from "@/components/ui/progress"; import { Check, ChevronLeft, ChevronRight, RotateCcw, Star } from "lucide-react";
+
+// ========================== //  DAILY QUESTS (ARC 1–3) // ========================== // EXP scales up across arcs. Arc 1 = 40–100 EXP, Arc 2 = 100–180 EXP, Arc 3 = 150–260 EXP
+
+const arc1 = [ { day: 1, task: "Brisk walk 20 min + 10 squat", exp: 50 }, { day: 2, task: "Squat (3x12) + Wall push-up (3x10) + Plank (3x20s)", exp: 60 }, { day: 3, task: "Jalan santai 15–20 minit", exp: 40 }, { day: 4, task: "Brisk walk/jog 25 minit", exp: 70 }, { day: 5, task: "Squat (3x15) + Glute bridge (3x12) + Side plank (2x20s kiri/kanan)", exp: 80 }, { day: 6, task: "Aktiviti suka (badminton/cycling ringan)", exp: 90 }, { day: 7, task: "Rehat / stretching ringan 10 min", exp: 20 }, { day: 8, task: "Jogging perlahan 25 minit", exp: 75 }, { day: 9, task: "Squat (3x12) + Knee push-up (3x10) + Plank (3x25s)", exp: 80 }, { day: 10, task: "Jalan santai 15–20 minit + stretching penuh badan", exp: 45 }, { day: 11, task: "Brisk walk + naik tangga 20–25 minit", exp: 85 }, { day: 12, task: "Squat (4x12) + Glute bridge (4x12) + Russian twist (3x15 kiri/kanan)", exp: 95 }, { day: 13, task: "Badminton ringan / skipping 5 min (pecah-pecah)", exp: 90 }, { day: 14, task: "Rehat / mobiliti 10–15 min", exp: 25 }, { day: 15, task: "Jogging perlahan 30 minit", exp: 90 }, { day: 16, task: "Squat (4x15) + Push-up lutut (3x12) + Plank (3x30s)", exp: 100 }, { day: 17, task: "Jalan santai 20 minit + stretching", exp: 50 }, { day: 18, task: "Brisk walk + skipping 5 min (selang-seli)", exp: 95 }, { day: 19, task: "Squat (4x15) + Glute bridge (4x15) + Mountain climber (3x20)", exp: 105 }, { day: 20, task: "Aktiviti suka (badminton/futsal/hiking ringan)", exp: 100 }, { day: 21, task: "Rehat / foam rolling 10 min", exp: 30 }, { day: 22, task: "Jogging perlahan 30–35 minit", exp: 100 }, { day: 23, task: "Squat (5x12) + Push-up lutut (3x12) + Plank (3x30s)", exp: 110 }, { day: 24, task: "Jalan santai 20–25 minit", exp: 55 }, { day: 25, task: "Brisk walk 30 minit + naik tangga", exp: 110 }, { day: 26, task: "Squat (5x15) + Glute bridge (5x12) + Russian twist (4x15 kiri/kanan)", exp: 120 }, { day: 27, task: "Aktiviti suka (badminton/cycling/hiking ringan)", exp: 110 }, { day: 28, task: "Rehat / mobiliti 15 min", exp: 35 }, { day: 29, task: "Jogging perlahan 35–40 minit", exp: 120 }, { day: 30, task: "Full body test: Squat 20, Push-up lutut 15, Plank 40s", exp: 130 } ];
+
+const arc2 = [ { day: 31, task: "Jogging 25 min + sprint ringan 3x30s", exp: 130 }, { day: 32, task: "Squat (4x15) + Knee push-up (4x12) + Plank (3x35s)", exp: 140 }, { day: 33, task: "Jalan santai / stretching penuh badan", exp: 60 }, { day: 34, task: "HIIT ringan 20 min (30s jog + 30s jalan × 10)", exp: 160 }, { day: 35, task: "DB shoulder press (3x12) + Bicep curl (3x12) + Side plank (3x25s)", exp: 140 }, { day: 36, task: "Aktiviti suka (badminton/cycling 30–60 min)", exp: 130 }, { day: 37, task: "Rehat / mobiliti 15 min", exp: 40 }, { day: 38, task: "Jogging 30 min + skipping 3x1 min", exp: 150 }, { day: 39, task: "Squat (5x12) + Push-up (3x10) + Mountain climber (3x20)", exp: 150 }, { day: 40, task: "Jalan santai 20 min + stretching", exp: 70 }, { day: 41, task: "HIIT ringan 20 min (40s jog + 20s jalan × 10)", exp: 170 }, { day: 42, task: "DB row (3x12) + Glute bridge (4x15) + Russian twist (3x20)", exp: 160 }, { day: 43, task: "Aktiviti suka (badminton/cycling/futsal)", exp: 140 }, { day: 44, task: "Rehat / foam rolling 15 min", exp: 50 }, { day: 45, task: "Jogging 35 min + sprint ringan 4x30s", exp: 160 }, { day: 46, task: "Squat jump (3x12) + Knee push-up (4x12) + Plank (3x40s)", exp: 160 }, { day: 47, task: "Jalan santai / yoga 20 min", exp: 70 }, { day: 48, task: "HIIT cardio 20 min (30s lari laju + 30s jalan × 10)", exp: 180 }, { day: 49, task: "DB shoulder press (4x12) + Bicep curl (4x12) + Mountain climber (3x25)", exp: 170 }, { day: 50, task: "Aktiviti suka (badminton/hiking ringan)", exp: 150 }, { day: 51, task: "Rehat / mobiliti 15 min", exp: 60 }, { day: 52, task: "Jogging 40 min steady pace", exp: 170 }, { day: 53, task: "Squat (5x15) + Push-up (4x12) + Russian twist (3x25)", exp: 170 }, { day: 54, task: "Jalan santai / stretching penuh badan", exp: 70 }, { day: 55, task: "HIIT cardio 25 min (40s lari + 20s jalan × 12)", exp: 190 }, { day: 56, task: "DB row (4x12) + Glute bridge (4x15) + Side plank (3x30s)", exp: 180 }, { day: 57, task: "Aktiviti suka (badminton/futsal/cycling)", exp: 160 }, { day: 58, task: "Rehat / mobiliti 15–20 min", exp: 70 }, { day: 59, task: "Jogging 45 min + skipping 3x1 min", exp: 190 }, { day: 60, task: "Full body test: Squat 30, Push-up 20, Plank 60s", exp: 200 } ];
+
+const arc3 = [ { day: 61, task: "Jogging 30–40 min steady pace", exp: 200 }, { day: 62, task: "Chest: Push-up 4x12 + DB press 4x12 + Plank 3x35s", exp: 210 }, { day: 63, task: "Legs: Squat 5x12 + Lunges 4x12 + Glute bridge 4x15", exp: 220 }, { day: 64, task: "Cardio HIIT 25 min (40/20 × 10–12)", exp: 210 }, { day: 65, task: "Back: DB row 4x12 + Hip hinge/Deadlift ringan 4x10 + Superman 3x15", exp: 220 }, { day: 66, task: "Aktiviti suka (badminton/hiking/swimming)", exp: 190 }, { day: 67, task: "Rehat / mobiliti 15–20 min", exp: 80 }, { day: 68, task: "Jog tempo 35 min (sedikit laju dari biasa)", exp: 210 }, { day: 69, task: "Chest + Triceps: Push-up 5x10 + DB press 4x12 + Dips bench 3x10", exp: 220 }, { day: 70, task: "Legs + Core: Squat 5x12 + Step-up 4x12 + Russian twist 4x20", exp: 230 }, { day: 71, task: "HIIT bukit/interval 25 min (lari 45s : jalan 15s × 12)", exp: 230 }, { day: 72, task: "Back + Biceps: DB row 5x10 + DB curl 4x12 + Side plank 3x30s", exp: 230 }, { day: 73, task: "Aktiviti suka (badminton/cycling)", exp: 200 }, { day: 74, task: "Rehat / yoga 20 min", exp: 90 }, { day: 75, task: "Jog panjang 45 min", exp: 230 }, { day: 76, task: "Chest + Shoulders: Push-up 5x12 + Shoulder press 4x12", exp: 240 }, { day: 77, task: "Legs: Squat 5x12 + Lunges 4x12 + Calf raise 4x15", exp: 240 }, { day: 78, task: "HIIT EMOM 20 min (setiap min: 30s kerja/30s rehat)", exp: 240 }, { day: 79, task: "Back + Core: DB row 4x12 + Superman 3x15 + Plank 3x40s", exp: 240 }, { day: 80, task: "Aktiviti suka (hiking ringan/badminton)", exp: 210 }, { day: 81, task: "Rehat / mobiliti 20 min", exp: 100 }, { day: 82, task: "Jog 45–50 min steady", exp: 240 }, { day: 83, task: "Upper body circuit: Push-up 4x12 + DB press 4x12 + Row 4x12", exp: 250 }, { day: 84, task: "Active recovery: jalan santai 25 min + mobility full body", exp: 120 }, { day: 85, task: "HIIT 30 min (40s kerja / 20s rehat × 15)", exp: 260 }, { day: 86, task: "Legs strength: Squat 5x12 + Romanian DL ringan 4x10 + Glute bridge 4x15", exp: 250 }, { day: 87, task: "Aktiviti suka (swimming/cycling/badminton)", exp: 220 }, { day: 88, task: "Rehat / foam rolling 20 min", exp: 110 }, { day: 89, task: "Jog 50 min + 6×20s stride (lari laju pendek)", exp: 260 }, { day: 90, task: "FINAL TEST: 2km jog timing + Squat 40 + Push-up 25 + Plank 90s", exp: 300 } ];
+
+const ALL_DAYS = [...arc1, ...arc2, ...arc3];
+
+const expToLevelUp = 500;
+
+const BADGES = [ { level: 5, name: "Bronze Fighter", color: "text-amber-400" }, { level: 10, name: "Silver Fighter", color: "text-gray-300" }, { level: 30, name: "Gold Fighter", color: "text-yellow-400" }, { level: 60, name: "Platinum Fighter", color: "text-blue-300" }, { level: 100, name: "Diamond Fighter", color: "text-cyan-300" } ];
+
+export default function NamieTheFighter() { const [level, setLevel] = useState(1); const [exp, setExp] = useState(0); const [currentDayIdx, setCurrentDayIdx] = useState(0); const [completed, setCompleted] = useState<Record<number, boolean>>({});
+
+const current = ALL_DAYS[currentDayIdx]; const currentArc = current.day <= 30 ? 1 : current.day <= 60 ? 2 : 3;
+
+useEffect(() => { const saved = localStorage.getItem("ntf_save"); if (saved) { try { const s = JSON.parse(saved); if (typeof s.level === "number") setLevel(s.level); if (typeof s.exp === "number") setExp(s.exp); if (typeof s.currentDayIdx === "number") setCurrentDayIdx(s.currentDayIdx); if (s.completed) setCompleted(s.completed); } catch {} } }, []);
+
+useEffect(() => { localStorage.setItem("ntf_save", JSON.stringify({ level, exp, currentDayIdx, completed })); }, [level, exp, currentDayIdx, completed]);
+
+const arcLabel = useMemo(() => { return currentArc === 1 ? "Arc 1: Fighter Awakens" : currentArc === 2 ? "Arc 2: Fighter Rises" : "Arc 3: True Fighter Form"; }, [currentArc]);
+
+const progressPercent = ((currentDayIdx + 1) / ALL_DAYS.length) * 100;
+
+const handleComplete = () => { if (!current) return; const gained = exp + current.exp; let newLevel = level; let newExp = gained;
+
+if (gained >= expToLevelUp) {
+  newLevel = level + Math.floor(gained / expToLevelUp);
+  newExp = gained % expToLevelUp;
+}
+
+setLevel(newLevel);
+setExp(newExp);
+setCompleted((prev) => ({ ...prev, [current.day]: true }));
+
+if (currentDayIdx < ALL_DAYS.length - 1) {
+  setCurrentDayIdx(currentDayIdx + 1);
+}
+
+};
+
+const gotoPrev = () => setCurrentDayIdx((i) => Math.max(0, i - 1)); const gotoNext = () => setCurrentDayIdx((i) => Math.min(ALL_DAYS.length - 1, i + 1));
+
+const resetProgress = () => { if (confirm("Reset level, EXP dan progress hari?")) { setLevel(1); setExp(0);
+
