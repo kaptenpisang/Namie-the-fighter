@@ -1,0 +1,19 @@
+// Daily quests ikut Arc
+
+export const arcs = {
+  1: [
+    "Jogging 10 minit",
+    "Minum 2 botol air kosong",
+    "Kurangkan 1 minuman manis"
+  ],
+  2: [
+    "Brisk walk 20 minit",
+    "Squats 3 set x 15",
+    "Footwork drill badminton"
+  ],
+  3: [
+    "Jogging 30 minit",
+    "Push-up 3 set x 10",
+    "No fast food hari ni"
+  ]
+};
